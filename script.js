@@ -9,16 +9,18 @@ $(document).ready(function () {
     const message = $(".message");
     const guess = $(".guess");
     const check = $(".check");
+    const number = $(".number");
 
     highscore.text(
         !sessionStorage.getItem("highscore")
-            ? 20
+            ? 0
             : Number(sessionStorage.getItem("highscore"))
     );
 
     again.click(function () {
         secretNumber = Math.floor(Math.random());
         score.text("20");
+        number.text("?");
         message.text("Start guessing...");
         guess.val("");
         guess.attr("disabled", false);
@@ -38,11 +40,12 @@ $(document).ready(function () {
     });
 
     check.click(() => {
-        let number = Number(guess.val());
+        let play = Number(guess.val());
         guess.val("");
         guess.focus();
-        if (number === secretNumber) {
+        if (play === secretNumber) {
             message.text("✅ That is my number!");
+            number.text(secretNumber);
             highscore.text(score.text());
             sessionStorage.setItem("highscore", highscore.text());
         } else if (score.text() == "0") {

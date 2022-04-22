@@ -2,4 +2,6 @@
 
 A Guess my Number game implemented in Javascript with JQuery.
 
-![Snapshot](/snapshot.jpg)
+![Game](/game.jpg)
+
+![Win](/win.jpg)

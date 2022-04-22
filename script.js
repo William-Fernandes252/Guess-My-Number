@@ -45,6 +45,7 @@ $(document).ready(function () {
     const again = $(".again");
     const message = $(".message");
     const number = $(".number");
+    const body = $("body");
 
     highscore.text(state.highscore);
 
@@ -55,6 +56,7 @@ $(document).ready(function () {
         message.text("Start guessing...");
         control.activate();
         control.toggle();
+        body.css("background-color", "");
     });
 
     control.input.keyup(() => control.toggle());
@@ -68,6 +70,7 @@ $(document).ready(function () {
                 number.text(state.secretNumber);
                 highscore.text(state.score);
                 control.deactivate();
+                body.css("background-color", "rgb(24, 167, 84)");
                 sessionStorage.setItem("highscore", highscore.text());
             } else {
                 state.score -= 1;

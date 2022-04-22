@@ -68,7 +68,10 @@ $(document).ready(function () {
             if (play === state.secretNumber) {
                 message.text("✅ That is my number!");
                 number.text(state.secretNumber);
-                highscore.text(state.score);
+                if (state.score > state.highscore) {
+                    state.highscore = state.score;
+                    highscore.text(state.highscore);
+                }
                 control.deactivate();
                 body.css("background-color", "rgb(24, 167, 84)");
                 sessionStorage.setItem("highscore", highscore.text());

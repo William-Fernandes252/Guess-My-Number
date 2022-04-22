@@ -1,7 +1,7 @@
 "use strict";
 
 $(document).ready(function () {
-    let secretNumber = Math.floor(Math.random() * 20);
+    let secretNumber = Math.floor(Math.random() * 19 + 1);
 
     const score = $(".score");
     const highscore = $(".highscore");

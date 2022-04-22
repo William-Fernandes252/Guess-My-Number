@@ -1,65 +1,87 @@
 "use strict";
 
 $(document).ready(function () {
-    let secretNumber = Math.floor(Math.random() * 19 + 1);
+    const state = {
+        reset: function () {
+            this.secretNumber = Math.floor(Math.random() * 19 + 1);
+            this.score = 20;
+            this.highscore = !sessionStorage.getItem("highscore")
+                ? 0
+                : Number(sessionStorage.getItem("highscore"));
+        },
+    };
+    state.reset();
+
+    const control = {
+        input: $(".guess"),
+        check: $(".check"),
+        toggle: function () {
+            this.input.focus();
+            if (!this.input.val()) {
+                this.check.attr("disabled", true);
+                this.check.css("opacity", 0.5);
+                return;
+            }
+            this.check.attr("disabled", false);
+            this.check.css("opacity", 1);
+        },
+        deactivate: function () {
+            this.input.attr("disabled", true);
+            this.input.css("opacity", 0.5);
+            this.check.attr("disabled", true);
+            this.check.css("opacity", 0.5);
+        },
+        activate: function () {
+            this.input.val("");
+            this.input.attr("disabled", false);
+            this.input.css("opacity", 1);
+            this.check.attr("disabled", false);
+            this.check.css("opacity", 1);
+        },
+    };
 
     const score = $(".score");
     const highscore = $(".highscore");
     const again = $(".again");
     const message = $(".message");
-    const guess = $(".guess");
-    const check = $(".check");
     const number = $(".number");
 
-    highscore.text(
-        !sessionStorage.getItem("highscore")
-            ? 0
-            : Number(sessionStorage.getItem("highscore"))
-    );
+    highscore.text(state.highscore);
 
     again.click(function () {
-        secretNumber = Math.floor(Math.random());
-        score.text("20");
+        state.reset();
+        score.text(state.score);
         number.text("?");
         message.text("Start guessing...");
-        guess.val("");
-        guess.attr("disabled", false);
-        guess.css("opacity", 1);
-        check.attr("disabled", false);
-        check.css("opacity", 1);
+        control.activate();
+        control.toggle();
     });
 
-    guess.keyup(function () {
-        if (!$(this).val()) {
-            check.attr("disabled", true);
-            check.css("opacity", 0.5);
-            return;
-        }
-        check.attr("disabled", false);
-        check.css("opacity", 1);
-    });
+    control.input.keyup(() => control.toggle());
 
-    check.click(() => {
-        let play = Number(guess.val());
-        guess.val("");
-        guess.focus();
-        if (play === secretNumber) {
-            message.text("✅ That is my number!");
-            number.text(secretNumber);
-            highscore.text(score.text());
-            sessionStorage.setItem("highscore", highscore.text());
-        } else if (score.text() == "0") {
-            message.text("❌ You lose. Try again!");
+    control.check.click(() => {
+        let play = Number(control.input.val());
+
+        if (state.score > 1) {
+            if (play === state.secretNumber) {
+                message.text("✅ That is my number!");
+                number.text(state.secretNumber);
+                highscore.text(state.score);
+                control.deactivate();
+                sessionStorage.setItem("highscore", highscore.text());
+            } else {
+                state.score -= 1;
+                score.text(state.score);
+                message.text(
+                    play > state.secretNumber ? "📈 Too high!" : "📉 Too low!"
+                );
+            }
         } else {
-            score.text(Number(score.text()) - 1);
-            message.text(
-                number > secretNumber ? "📈 Too high!" : "📉 Too low!"
-            );
-            return;
+            score.text("0");
+            message.text("❌ You lose. Try again!");
         }
-        guess.attr("disabled", true);
-        guess.css("opacity", 0.5);
-        check.attr("disabled", true);
-        check.css("opacity", 0.5);
+
+        control.input.val("");
+        control.toggle();
     });
 });
